@@ -1,0 +1,28 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isOwner() {
+      return request.auth != null
+        && request.auth.token.email == 'anabcruzsilva@gmail.com'
+        && request.auth.token.email_verified == true;
+    }
+
+    match /messages/{messageId} {
+      allow read: if isOwner();
+      allow create, delete: if false;
+      allow update: if isOwner()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['answered'])
+        && request.resource.data.answered is bool;
+    }
+
+    match /settings/portfolio {
+      allow read: if true;
+      allow create, update: if isOwner()
+        && request.resource.data.keys().hasOnly(['featuredProjectIds'])
+        && request.resource.data.featuredProjectIds is list
+        && request.resource.data.featuredProjectIds.hasOnly(['0', '1', '2', '3']);
+      allow delete: if false;
+    }
+  }
+}
