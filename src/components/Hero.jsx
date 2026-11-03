@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import anaImg from '../assets/ana.webp'
+import anaImg from '../assets/ana.jpeg'
 
 function Hero() {
   const [mostrarFoto, setMostrarFoto] = useState(true)
